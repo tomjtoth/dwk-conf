@@ -40,7 +40,7 @@ jobs:
       - name: Build image
         uses: docker/build-push-action@v6
         with:
-          context: .
+          context: ./log_output
           platforms: linux/arm64, linux/amd64
           push: true
           tags: tomjtoth/devops-with-kubernetes:${{ env.TAG }}
