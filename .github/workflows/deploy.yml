@@ -18,7 +18,7 @@ jobs:
     steps:
       - name: get tag
         run: |
-          TAG=$(grep -Po '(?<=tag-v)(\d\.\d)' "${{ github.event.head_commit.message }}")
+          TAG=$(grep -Po '(?<=deploy )(\d+\.\d+)' <<< "${{ github.event.head_commit.message }}")
           echo "TAG=$TAG" >> $GITHUB_ENV
 
       - name: Checkout
