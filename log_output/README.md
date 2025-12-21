@@ -6,7 +6,7 @@ Run the script with BASH
 bash ./main.sh
 ```
 
-or apply via
+or deploy via
 
 ```sh
 kubectl apply -f manifests/deployment.yml
