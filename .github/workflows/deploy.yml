@@ -11,7 +11,7 @@ concurrency:
 
 jobs:
   deploy:
-    if: contains(github.event.head_commit.message, '#deploy')
+    if: contains(github.event.head_commit.message, '#deploy ')
     name: Generate Docker image
     runs-on: ubuntu-latest
 
@@ -20,9 +20,14 @@ jobs:
         env:
           COMMIT_MSG: ${{ github.event.head_commit.message }}
         run: |
-          TAG=$(printf '%s' "$COMMIT_MSG" | grep -Po '#deploy *\K\d+\.\d+')
-          [ -z "$TAG" ] && exit 1
-          echo "TAG=$TAG" >> $GITHUB_ENV
+          # https://regex101.com/r/H4BBVD/1
+          read -r SVC VER <<<"$(
+            printf '%s' "$COMMIT_MSG" \
+            | sed -nE 's/.*#deploy\s+(\S+)\s*:\s*([0-9]+\.[0-9]+).*/\1 \2/p'
+          )"
+          [ -z "$SVC" || -z "$VER" ] && exit 1
+          echo "SVC=$SVC" >> $GITHUB_ENV
+          echo "VER=$VER" >> $GITHUB_ENV
 
       - name: Checkout
         uses: actions/checkout@v6
@@ -39,8 +44,8 @@ jobs:
       - name: Build image
         uses: docker/build-push-action@v6
         with:
-          context: ./project
+          context: ./${{ env.TAG }}
           push: true
-          tags: tomjtoth/devops-with-kubernetes:${{ env.TAG }}
+          tags: tomjtoth/devops-with-kubernetes:${{ env.TAG }}-${{ env.VER }}
           cache-from: type=gha,scope=shared
           cache-to: type=gha,mode=max,scope=shared
