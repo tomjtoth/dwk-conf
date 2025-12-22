@@ -12,6 +12,17 @@ spec:
       labels:
         app: log-output
     spec:
+      volumes:
+        - name: shared-log
+          emptyDir: {}
       containers:
         - name: log-output
-          image: tomjtoth/devops-with-kubernetes:log-output-1.7
+          image: tomjtoth/devops-with-kubernetes:log-output-1.10
+          volumeMounts:
+            - name: shared-log
+              mountPath: /app/logs
+        - name: log-server
+          image: tomjtoth/devops-with-kubernetes:log-server-1.10
+          volumeMounts:
+            - name: shared-log
+              mountPath: /app/logs
