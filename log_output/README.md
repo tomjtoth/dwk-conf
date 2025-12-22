@@ -1,13 +1,13 @@
 # Log output
 
-Run the script with BASH
+You probably only need `rustc` or `rustup` for this. Then you can run it with
 
 ```sh
-bash ./main.sh
+cargo run
 ```
 
 or deploy via
 
 ```sh
-kubectl apply -f manifests/deployment.yml
+kubectl apply -f manifests
 ```
