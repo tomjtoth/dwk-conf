@@ -21,13 +21,18 @@ jobs:
           COMMIT_MSG: ${{ github.event.head_commit.message }}
         run: |
           # https://regex101.com/r/H4BBVD/1
-          read -r SVC VER <<<"$(
+          read -r APP VER <<<"$(
             printf '%s' "$COMMIT_MSG" \
             | sed -nE 's/.*#deploy\s+([[:alnum:]-]+)\s*:\s*([0-9]+\.[0-9]+).*/\1 \2/p'
           )"
-          [ -z "$SVC" || -z "$VER" ] && exit 1
-          echo "SVC=$SVC" >> $GITHUB_ENV
-          echo "VER=$VER" >> $GITHUB_ENV
+          [ -z "$APP" ] && exit 1
+          echo "TAG=$APP-$VER" >> $GITHUB_ENV
+
+          FOLDER=$(
+            printf '%s' "$APP" \
+            | sed -nE 's/[^[:alnum:]_]+/_/gp'
+          )
+          echo "FOLDER=$FOLDER" >> $GITHUB_ENV
 
       - name: Checkout
         uses: actions/checkout@v6
@@ -44,8 +49,8 @@ jobs:
       - name: Build image
         uses: docker/build-push-action@v6
         with:
-          context: ./${{ env.TAG }}
+          context: ./${{ env.FOLDER }}
           push: true
-          tags: tomjtoth/devops-with-kubernetes:${{ env.TAG }}-${{ env.VER }}
+          tags: tomjtoth/devops-with-kubernetes:${{ env.TAG }}
           cache-from: type=gha,scope=shared
           cache-to: type=gha,mode=max,scope=shared
