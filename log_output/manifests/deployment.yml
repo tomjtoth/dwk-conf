@@ -14,7 +14,8 @@ spec:
     spec:
       volumes:
         - name: shared-log
-          emptyDir: {}
+          persistentVolumeClaim:
+            claimName: pvc-100m
       containers:
         - name: log-output
           image: tomjtoth/devops-with-kubernetes:log-output-1.10
