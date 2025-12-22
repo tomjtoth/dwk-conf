@@ -7,5 +7,5 @@ RUN cargo build --release
 
 FROM alpine
 WORKDIR /app
-COPY --from=builder /app/target/release/project /app/project
-ENTRYPOINT ["/app/project"]
+COPY --from=builder /app/target/release/todo_app /app/todo_app
+ENTRYPOINT ["/app/todo_app"]
