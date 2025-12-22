@@ -16,7 +16,7 @@ async fn main() {
 
     let app = Router::new()
         .route(
-            "/",
+            "/pingpong",
             get(|State(state): State<Arc<AppState>>| async move {
                 let current = state.counter.fetch_add(1, Ordering::SeqCst);
                 format!("pong {}", current)
