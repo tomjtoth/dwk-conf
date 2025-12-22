@@ -3,3 +3,4 @@ Dockerfile
 /target
 /manifests
 README.md
+/logs
