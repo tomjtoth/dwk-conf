@@ -9,5 +9,11 @@ cargo run
 or deploy via
 
 ```sh
-kubectl apply -f manifests/deployment.yml
+kubectl apply -f manifests
+```
+
+and access at http://localhost:8081, but first:
+
+```sh
+kubectl delete -f ../log_output/ingress.yml
 ```
