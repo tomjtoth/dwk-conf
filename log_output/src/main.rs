@@ -1,41 +1,21 @@
-use std::{env, sync::Arc, time::Duration};
-
-use axum::{Router, routing::get};
-use tokio::time::sleep;
-use uuid::Uuid;
+use std::{env, fs::File, io::Write, time::Duration};
 
 use time::UtcDateTime;
-
-fn current_status(id: &Arc<Uuid>) -> String {
-    format!("{}: {}", UtcDateTime::now(), id)
-}
+use uuid::Uuid;
 
 #[tokio::main]
 async fn main() {
-    let id = Arc::new(Uuid::new_v4());
+    let id = Uuid::new_v4();
 
-    let id_for_loop = id.clone();
-    tokio::spawn(async move {
-        loop {
-            println!("{}", current_status(&id_for_loop));
-            sleep(Duration::from_secs(5)).await;
-        }
-    });
+    let log_path = env::var("LOG_PATH").unwrap_or(String::from("logs/output.log"));
 
-    let app = Router::new().route(
-        "/",
-        get(move || {
-            let id = Arc::clone(&id);
-            async move { current_status(&id) }
-        }),
-    );
-
-    let port = env::var("PORT").unwrap_or(String::from("3000"));
-
-    let listener = tokio::net::TcpListener::bind(format!("0.0.0.0:{}", &port))
-        .await
+    let mut file = File::options()
+        .append(true)
+        .create(true)
+        .open(log_path)
         .unwrap();
-
-    println!("Server started at port {}", &port);
-    axum::serve(listener, app).await.unwrap();
+    loop {
+        let _ = writeln!(&mut file, "{}: {}", UtcDateTime::now(), id);
+        tokio::time::sleep(Duration::from_secs(5)).await;
+    }
 }
