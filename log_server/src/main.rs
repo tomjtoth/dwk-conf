@@ -31,6 +31,6 @@ async fn main() {
         .await
         .unwrap();
 
-    println!("Server started at port {}", &port);
+    println!("LOG_SERVER listening at :{}/", &port);
     axum::serve(listener, app).await.unwrap();
 }
