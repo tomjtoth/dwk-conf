@@ -30,7 +30,7 @@ jobs:
 
           FOLDER=$(
             printf '%s' "$APP" \
-            | sed -nE 's/[^[:alnum:]_]+/_/gp'
+            | sed -E 's/[^[:alnum:]_]+/_/g'
           )
           echo "FOLDER=$FOLDER" >> $GITHUB_ENV
 
