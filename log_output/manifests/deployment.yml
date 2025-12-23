@@ -13,17 +13,20 @@ spec:
         app: log-output
     spec:
       volumes:
-        - name: shared-log
+        - name: shared-data
           persistentVolumeClaim:
             claimName: pvc-100m
       containers:
         - name: log-output
           image: tomjtoth/devops-with-kubernetes:log-output-1.10
+          env:
+            - name: LOG_PATH
+              value: data/log
           volumeMounts:
-            - name: shared-log
-              mountPath: /app/logs
+            - name: shared-data
+              mountPath: /app/data
         - name: log-server
-          image: tomjtoth/devops-with-kubernetes:log-server-1.10
+          image: tomjtoth/devops-with-kubernetes:log-server-1.11
           volumeMounts:
-            - name: shared-log
-              mountPath: /app/logs
+            - name: shared-data
+              mountPath: /app/data
