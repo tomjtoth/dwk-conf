@@ -5,7 +5,7 @@ WORKDIR /app
 COPY . .
 RUN cargo build --release
 
-FROM alpine
+FROM scratch
 WORKDIR /app
 COPY --from=builder /app/target/release/pingpong /app/pingpong
 ENTRYPOINT ["/app/pingpong"]
