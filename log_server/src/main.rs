@@ -5,25 +5,35 @@ use std::{
     sync::Arc,
 };
 
-use axum::{Router, routing::get};
+use axum::{Router, extract::State, routing::get};
+
+#[derive(Clone)]
+struct AppState {
+    log_file: Arc<File>,
+}
 
 #[tokio::main]
 async fn main() {
     let log_path = env::var("LOG_PATH").unwrap_or(String::from("logs/output.log"));
 
-    let mut file = Arc::new(File::options().read(true).open(log_path).unwrap());
+    let app_state = AppState {
+        log_file: Arc::new(File::options().read(true).open(log_path).unwrap()),
+    };
 
-    let app = Router::new().route(
-        "/",
-        get(|| async move {
-            let mut contents = String::new();
+    let app = Router::new()
+        .route(
+            "/",
+            get(
+                |State(AppState { mut log_file }): State<AppState>| async move {
+                    let mut contents = String::new();
+                    let _ = log_file.seek(SeekFrom::Start(0));
+                    let _ = log_file.read_to_string(&mut contents);
 
-            let _ = file.seek(SeekFrom::Start(0));
-            let _ = file.read_to_string(&mut contents);
-
-            contents
-        }),
-    );
+                    contents
+                },
+            ),
+        )
+        .with_state(app_state);
 
     let port = env::var("PORT").unwrap_or(String::from("3000"));
 
