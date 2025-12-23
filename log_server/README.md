@@ -10,8 +10,9 @@ cargo run
 
 ..make sure you're running both [log_output](../log_output) and [pingpong](../pingpong) first in the background.
 
-...or deploy via
+...or deploy everything via
 
 ```sh
+kubectl apply -f ../pingpong/manifests
 kubectl apply -f ../log_output/manifests
 ```
