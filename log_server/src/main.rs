@@ -14,10 +14,15 @@ struct AppState {
 
 #[tokio::main]
 async fn main() {
-    let log_path = env::var("LOG_PATH").unwrap_or(String::from("logs/output.log"));
+    let log_path = env::var("LOG_PATH").unwrap_or(String::from("data/log"));
 
     let app_state = AppState {
-        log_file: Arc::new(File::options().read(true).open(log_path).unwrap()),
+        log_file: Arc::new(
+            File::options()
+                .read(true)
+                .open(&log_path)
+                .expect(&format!(r#"unable to open LOG_PATH="{log_path}""#)),
+        ),
     };
 
     let app = Router::new()
