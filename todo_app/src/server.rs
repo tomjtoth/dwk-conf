@@ -2,7 +2,7 @@ use std::{env, fs, io::Write, path::Path, time::SystemTime};
 
 use dioxus::prelude::debug;
 
-pub(super) fn replace_image_if_needed() -> std::io::Result<()> {
+pub(super) fn replace_image_if_needed() {
     tokio::spawn(async {
         let image_path = env::var("IMAGE_PATH").unwrap_or(String::from("public/data/image"));
 
@@ -26,8 +26,6 @@ pub(super) fn replace_image_if_needed() -> std::io::Result<()> {
             let _ = get_image(image_path).await;
         }
     });
-
-    Ok(())
 }
 
 async fn get_image(image_path: String) -> Result<(), Box<dyn std::error::Error>> {

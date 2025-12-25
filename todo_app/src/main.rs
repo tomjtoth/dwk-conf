@@ -9,7 +9,7 @@ fn main() {
 
     #[cfg(feature = "server")]
     dioxus::serve(|| async move {
-        server::replace_image_if_needed()?;
+        server::replace_image_if_needed();
 
         let ip = std::env::var("IP").unwrap_or(String::from("127.0.0.1"));
         let port = std::env::var("PORT").unwrap_or(String::from("8080"));
@@ -21,7 +21,7 @@ fn main() {
 
 #[post("/check-on-image")]
 async fn check_on_image() -> Result<()> {
-    server::replace_image_if_needed()?;
+    server::replace_image_if_needed();
 
     Ok(())
 }
