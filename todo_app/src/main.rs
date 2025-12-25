@@ -18,7 +18,13 @@ fn main() {
             conf::PORT.to_string()
         );
 
-        Ok(dioxus::server::router(App))
+        Ok(dioxus::server::router(App).route(
+            "/10min-image",
+            dioxus::server::axum::routing::get(|| async {
+                let path_as_str = conf::IMAGE_PATH.to_string();
+                tokio::fs::read(path_as_str).await.unwrap_or(vec![])
+            }),
+        ))
     });
 }
 
@@ -36,7 +42,7 @@ pub fn App() -> Element {
     rsx! {
         document::Stylesheet { href: asset!("/assets/tailwind.css") }
         h1 { "The project App" }
-        img { src: "/data/image", class: "max-w-100" }
+        img { src: "/10min-image", class: "max-w-100" }
         h3 { "DevOps with Kubernetes 2025" }
     }
 }
