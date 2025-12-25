@@ -12,6 +12,13 @@ spec:
       labels:
         app: todo-app
     spec:
+      volumes:
+        - name: shared-data
+          persistentVolumeClaim:
+            claimName: pvc-100m
       containers:
         - name: todo-app
-          image: tomjtoth/devops-with-kubernetes:todo-app-1.8
+          image: tomjtoth/devops-with-kubernetes:todo-app-1.12
+          volumeMounts:
+            - name: shared-data
+              mountPath: /app/public/data
