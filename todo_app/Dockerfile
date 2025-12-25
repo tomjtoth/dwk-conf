@@ -23,5 +23,5 @@ FROM scratch
 
 WORKDIR /app
 COPY --from=builder /app/target/dx/todo_app/release/web /app
-ENV IP=0.0.0.0 PORT=3000
+ENV IP=0.0.0.0 PORT=3000 CHANGE_INTERVAL=600
 ENTRYPOINT ["/app/todo_app"]

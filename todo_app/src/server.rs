@@ -5,10 +5,19 @@ use dioxus::prelude::debug;
 pub(super) async fn replace_image_if_needed() -> std::io::Result<()> {
     let image_path = env::var("IMAGE_PATH").unwrap_or(String::from("public/data/image"));
 
+    // 5 seconds for dev purposes
+    let mut change_interval = 5;
+
+    if let Ok(str) = env::var("CHANGE_INTERVAL") {
+        if let Ok(x) = str.parse::<u64>() {
+            change_interval = x;
+        }
+    }
+
     let metadata = fs::metadata(&image_path);
     if let Ok(metadata) = metadata {
         if let Ok(mtime) = metadata.modified() {
-            if SystemTime::now().duration_since(mtime).unwrap().as_secs() > 5 {
+            if SystemTime::now().duration_since(mtime).unwrap().as_secs() > change_interval {
                 let _ = get_image(image_path).await;
             }
         }
