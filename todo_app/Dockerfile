@@ -19,7 +19,7 @@ COPY . .
 RUN tailwindcss -i ./tailwind.css -o ./assets/tailwind.css --minify && \
     dx build --release
 
-FROM scratch
+FROM alpine
 
 WORKDIR /app
 COPY --from=builder /app/target/dx/todo_app/release/web /app
