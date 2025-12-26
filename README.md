@@ -6,6 +6,8 @@ Tämä on palautusrepo HY:n kurssille.
 
 Docker images ([`tomjtoth/devops-with-kubernetes:service-x.y`](https://hub.docker.com/r/tomjtoth/devops-with-kubernetes/tags)) are generated via [GHA](.github/workflows/deploy.yml#L19-L30), tags are parsed from the HEAD commit message ("... `#deploy service:x.y` ...") via regex.
 
+### Chapter 2
+
 - [1.1](https://github.com/tomjtoth/DevOps-with-Kubernetes/tree/1.1/log_output)
 - [1.2](https://github.com/tomjtoth/DevOps-with-Kubernetes/tree/1.2/project)
 - [1.3](https://github.com/tomjtoth/DevOps-with-Kubernetes/tree/1.3/log_output)
@@ -21,3 +23,8 @@ Docker images ([`tomjtoth/devops-with-kubernetes:service-x.y`](https://hub.docke
 - [1.11](https://github.com/tomjtoth/DevOps-with-Kubernetes/tree/1.11/log_server)
 - [1.12](https://github.com/tomjtoth/DevOps-with-Kubernetes/tree/1.12/todo_app)
 - [1.13](https://github.com/tomjtoth/DevOps-with-Kubernetes/tree/1.13/todo_app)
+
+### Chapter 3
+
+- [2.1](https://github.com/tomjtoth/DevOps-with-Kubernetes/tree/2.1/pingpong)
+  - or the [log_server](https://github.com/tomjtoth/DevOps-with-Kubernetes/tree/2.1/log_server)
