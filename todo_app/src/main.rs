@@ -46,7 +46,11 @@ pub fn App() -> Element {
         h1 { "The project App" }
         img { src: "/10min-image", class: "max-w-100" }
         form { onsubmit: |ev| ev.prevent_default(),
-            input { value, onchange: move |ev| value.set(ev.value()) }
+            input {
+                value,
+                max: 140,
+                onchange: move |ev| value.set(ev.value()),
+            }
             button { "Create todo" }
         }
         ul {
