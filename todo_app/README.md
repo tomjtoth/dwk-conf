@@ -1,16 +1,16 @@
 # TODO app
 
-Written in Dioxus, overridable env vars are `CHANGE_INTERVAL`, `IMAGE_PATH` and `PORT`.
+Written in Dioxus, overridable env vars are `IP`, `PORT`, `CHANGE_INTERVAL` and `IMAGE_PATH`.
 
-## Dev
+## Devlopment
 
-Follow [their guide](https://dioxuslabs.com/learn/0.7/getting_started/) to setup your workstation. To get styles download [tailwindcss](https://github.com/tailwindlabs/tailwindcss/releases/), and run
+Follow the [step-by-step](https://dioxuslabs.com/learn/0.7/getting_started/) to setup your workstation for Dx. To get styles download [tailwindcss](https://github.com/tailwindlabs/tailwindcss/releases/), and run
 
 ```sh
 tailwindcss -i ./tailwind.css -o ./assets/tailwind.css --watch
 ```
 
-then run via
+then serve the app via
 
 ```sh
 dx serve

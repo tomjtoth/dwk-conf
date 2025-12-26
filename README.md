@@ -19,3 +19,4 @@ Docker images ([`tomjtoth/devops-with-kubernetes:service-x.y`](https://hub.docke
   - [output](https://github.com/tomjtoth/DevOps-with-Kubernetes/tree/1.10/log_output)
   - [server](https://github.com/tomjtoth/DevOps-with-Kubernetes/tree/1.10/log_server)
 - [1.11](https://github.com/tomjtoth/DevOps-with-Kubernetes/tree/1.11/log_server)
+- [1.12](https://github.com/tomjtoth/DevOps-with-Kubernetes/tree/1.12/todo_app)
