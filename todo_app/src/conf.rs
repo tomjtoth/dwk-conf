@@ -20,3 +20,7 @@ pub(crate) static CHANGE_INTERVAL: LazyLock<u64> = LazyLock::new(|| {
 
     change_interval
 });
+
+pub(crate) static BACKEND_URL: LazyLock<String> = LazyLock::new(|| {
+    env::var("BACKEND_URL").unwrap_or(String::from("http://todo-backend-svc:55555/todos"))
+});

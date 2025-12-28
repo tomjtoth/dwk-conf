@@ -1,6 +1,6 @@
 # TODO app
 
-Written in Dioxus, overridable env vars are `IP`, `PORT`, `CHANGE_INTERVAL` and `IMAGE_PATH`.
+Written in Dioxus, overridable env vars are `IP`, `PORT`, `CHANGE_INTERVAL`, `IMAGE_PATH` and `BACKEND_URL`.
 
 ## Devlopment
 

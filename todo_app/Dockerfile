@@ -5,14 +5,13 @@ COPY . .
 RUN --mount=type=cache,target=/usr/local/cargo/registry \
     --mount=type=cache,target=/usr/local/cargo/git \
     --mount=type=cache,target=/app/target \
-    tailwindcss -i ./tailwind.css -o ./assets/tailwind.css --minify && \
     dx build --release --verbose --debug-symbols=false && \
-    mv /app/target/dx/todo_app/release/web /app/.built
+    mv /app/target/dx/todo_app/release/web /app.built
 
 FROM scratch
 WORKDIR /app
 
-COPY --from=builder /app/.built /app
+COPY --from=builder /app.built /app
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 
 ENV SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt \

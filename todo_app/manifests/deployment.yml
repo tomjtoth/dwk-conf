@@ -18,7 +18,8 @@ spec:
             claimName: pvc-100m
       containers:
         - name: todo-app
-          image: tomjtoth/devops-with-kubernetes:todo-app-1.13
+          image: tomjtoth/devops-with-kubernetes:todo-app-2.2
+          imagePullPolicy: Always
           volumeMounts:
             - name: shared-data
               mountPath: /app/public/data

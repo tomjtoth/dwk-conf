@@ -1,5 +1,7 @@
 use std::{fs, io::Write, path::Path, time::SystemTime};
 
+use dioxus::fullstack::reqwest;
+
 use crate::conf::{CHANGE_INTERVAL, IMAGE_PATH};
 
 pub(super) fn replace_image_if_needed() {
