@@ -37,10 +37,12 @@ async fn main() {
 
 async fn retrieve_todos(State(todos): State<AppState>) -> impl IntoResponse {
     let todos = todos.lock().await.clone();
+    println!("serving {} todos", todos.len());
     axum::response::Json::from(todos)
 }
 
 async fn add_todo(State(todos): State<AppState>, Json(todo): Json<String>) -> impl IntoResponse {
+    println!("pushing \"{}\" into todos", &todo);
     todos.lock().await.push(todo);
     StatusCode::CREATED
 }
