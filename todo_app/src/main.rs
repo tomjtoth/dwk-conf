@@ -4,6 +4,8 @@ use dioxus::prelude::*;
 mod conf;
 #[cfg(feature = "server")]
 mod server;
+#[cfg(feature = "server")]
+use dioxus::fullstack::reqwest;
 
 fn main() {
     #[cfg(not(feature = "server"))]
@@ -36,16 +38,56 @@ async fn check_on_image() -> Result<()> {
     Ok(())
 }
 
+#[get("/todos")]
+async fn get_todos() -> Result<Vec<String>> {
+    println!("getting todos from {}", &*conf::BACKEND_URL);
+
+    let res = reqwest::get(&*conf::BACKEND_URL).await?;
+    println!("reponse is OK");
+
+    let arr = res.json::<Vec<String>>().await?;
+    println!("json is OK");
+
+    Ok(arr)
+}
+
+#[post("/todos")]
+async fn post_todo(todo: String) -> Result<String> {
+    reqwest::Client::new()
+        .post(&*conf::BACKEND_URL)
+        .json(&todo)
+        .send()
+        .await?;
+
+    Ok(todo)
+}
+
 #[component]
 pub fn App() -> Element {
-    use_server_future(check_on_image).unwrap();
+    let todos_query_res = use_server_future(get_todos)?;
+    use_server_future(check_on_image)?;
+
     let mut value = use_signal(|| String::new());
+    let mut todos = use_signal(Vec::<String>::new);
+
+    use_effect(move || {
+        if let Some(Ok(list)) = todos_query_res() {
+            todos.set(list);
+        }
+    });
 
     rsx! {
         document::Stylesheet { href: asset!("/assets/tailwind.css") }
         h1 { "The project App" }
         img { src: "/10min-image", class: "max-w-100" }
-        form { onsubmit: |ev| ev.prevent_default(),
+        form {
+            onsubmit: move |ev| async move {
+                ev.prevent_default();
+                let todo = value.read().clone();
+                if let Ok(todo) = post_todo(todo).await {
+                    todos.push(todo)
+                }
+            },
             input {
                 value,
                 max: 140,
@@ -54,9 +96,9 @@ pub fn App() -> Element {
             button { "Create todo" }
         }
         ul {
-            li { "Learn Rust" }
-            li { "Learn Dioxus" }
-            li { "Build something" }
+            for todo in todos.iter() {
+                li { "{todo}" }
+            }
         }
         h3 { "DevOps with Kubernetes 2025" }
     }
