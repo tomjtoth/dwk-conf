@@ -8,13 +8,13 @@ Docker images ([`tomjtoth/devops-with-kubernetes:service-x.y`](https://hub.docke
 
 ## K3s tweaks
 
-Recreating the cluster
+Recreating the cluster for every single submission to start afresh via these commands:
 
 ```sh
 k3d cluster delete
 k3d cluster create --port 8082:30080@agent:0 -p 8081:80@loadbalancer --agents 2
-docker exec k3d-k3s-default-agent-0 mkdir -p /tmp/kube
-for app in ns/manifests pv/manifests */manifests; do kubectl apply -f $app; done
+docker exec k3d-k3s-default-agent-0 mkdir -p /tmp/kube-{exercises,project}
+for manifests in {ns,pv,*}/manifests; do kubectl apply -f $manifests; done
 ```
 
 ### Chapter 2
@@ -44,3 +44,4 @@ for app in ns/manifests pv/manifests */manifests; do kubectl apply -f $app; done
   - [todo-app](https://github.com/tomjtoth/DevOps-with-Kubernetes/tree/2.2/todo_app)
   - [todo-backend](https://github.com/tomjtoth/DevOps-with-Kubernetes/tree/2.2/todo_backend)
 - [2.3](https://github.com/tomjtoth/DevOps-with-Kubernetes/tree/2.3/log_output)
+- [2.4](https://github.com/tomjtoth/DevOps-with-Kubernetes/tree/2.4/todo_app)
