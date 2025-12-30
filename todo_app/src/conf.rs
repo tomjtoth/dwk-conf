@@ -1,26 +1,20 @@
 use std::{env, sync::LazyLock};
 
 pub(crate) static IMAGE_PATH: LazyLock<String> =
-    LazyLock::new(|| env::var("IMAGE_PATH").unwrap_or(String::from("public/image")));
+    LazyLock::new(|| env::var("IMAGE_PATH").expect("missing env var IMAGE_PATH"));
 
 pub(super) static IP: LazyLock<String> =
-    LazyLock::new(|| env::var("IP").unwrap_or(String::from("127.0.0.1")));
+    LazyLock::new(|| env::var("IP").expect("missing env var IP"));
 
 pub(super) static PORT: LazyLock<String> =
-    LazyLock::new(|| env::var("PORT").unwrap_or(String::from("8080")));
+    LazyLock::new(|| env::var("PORT").expect("missing env var PORT"));
 
 pub(crate) static CHANGE_INTERVAL: LazyLock<u64> = LazyLock::new(|| {
-    let mut change_interval = 5;
-
-    if let Ok(str) = env::var("CHANGE_INTERVAL") {
-        if let Ok(x) = str.parse::<u64>() {
-            change_interval = x;
-        }
-    }
-
-    change_interval
+    env::var("CHANGE_INTERVAL")
+        .expect("missing env var CHANGE_INTERVAL")
+        .parse::<u64>()
+        .expect("CHANGE_INTERVAL must be a valid u64")
 });
 
-pub(crate) static BACKEND_URL: LazyLock<String> = LazyLock::new(|| {
-    env::var("BACKEND_URL").unwrap_or(String::from("http://todo-backend-svc:55555/todos"))
-});
+pub(crate) static BACKEND_URL: LazyLock<String> =
+    LazyLock::new(|| env::var("BACKEND_URL").expect("missing env var BACKEND_URL"));

@@ -19,8 +19,17 @@ spec:
             claimName: pvc-100m
       containers:
         - name: todo-app
-          image: tomjtoth/devops-with-kubernetes:todo-app-2.2
+          image: tomjtoth/devops-with-kubernetes:todo-app-2.6
           imagePullPolicy: Always
+          env:
+            - name: IP
+              value: 0.0.0.0
+            - name: PORT
+              value: "3000"
+            - name: CHANGE_INTERVAL
+              value: "600"
+            - name: BACKEND_URL
+              value: http://todo-backend-svc:55555/todos
           volumeMounts:
             - name: shared-data
               mountPath: /app/public/data

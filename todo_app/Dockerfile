@@ -15,8 +15,5 @@ WORKDIR /app
 COPY --from=builder /app.built /app
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 
-ENV SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt \
-    IP=0.0.0.0 \
-    PORT=3000 \
-    CHANGE_INTERVAL=600
+ENV SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
 ENTRYPOINT ["/app/todo_app"]
