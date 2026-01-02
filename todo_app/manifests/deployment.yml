@@ -30,6 +30,8 @@ spec:
               value: "600"
             - name: BACKEND_URL
               value: http://todo-backend-svc:55555/todos
+            - name: IMAGE_PATH
+              value: data/image
           volumeMounts:
             - name: shared-data
               mountPath: /app/public/data
