@@ -1,0 +1,19 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  namespace: project
+  name: reminder
+spec:
+  schedule: "0 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: reminder
+              image: tomjtoth/devops-with-kubernetes:todo-reminder-2.9
+              imagePullPolicy: Always
+              env:
+                - name: DATABASE_URL
+                  value: postgres://postgres:password@postgres-svc
+          restartPolicy: OnFailure
