@@ -1,3 +1,4 @@
+use std::sync::LazyLock;
 use std::{env, sync::Arc};
 
 use axum::http::StatusCode;
@@ -7,18 +8,23 @@ use axum::{
     extract::State,
     routing::{get, post},
 };
-use tokio::sync::Mutex;
+use sqlx::postgres::PgPoolOptions;
+use sqlx::{Pool, Postgres, query, query_as};
 
-type AppState = Arc<Mutex<Vec<String>>>;
+struct AppState(Pool<Postgres>);
+
+static DATABASE_URL: LazyLock<String> =
+    LazyLock::new(|| env::var("DATABASE_URL").expect("missing env var DATABASE_URL"));
 
 #[tokio::main]
 async fn main() {
-    let state: AppState = Arc::new(Mutex::new(
-        "Learn Rust, Learn Dioxus, Build something"
-            .split(", ")
-            .map(String::from)
-            .collect(),
-    ));
+    let pool = PgPoolOptions::new()
+        .max_connections(5)
+        .connect(&*DATABASE_URL)
+        .await
+        .expect(&format!("unable to connect to DB @ {}", &*DATABASE_URL));
+
+    let state = Arc::new(AppState(pool));
 
     let app = Router::new()
         .route("/todos", get(retrieve_todos))
@@ -35,14 +41,31 @@ async fn main() {
     axum::serve(listener, app).await.unwrap();
 }
 
-async fn retrieve_todos(State(todos): State<AppState>) -> impl IntoResponse {
-    let todos = todos.lock().await.clone();
+async fn retrieve_todos(State(state): State<Arc<AppState>>) -> impl IntoResponse {
+    let todos: Vec<(String,)> = query_as("SELECT todo FROM todos")
+        .fetch_all(&state.0)
+        .await
+        .expect("retrieving todos failed");
+
     println!("serving {} todos", todos.len());
-    axum::response::Json::from(todos)
+
+    let mapped = todos
+        .iter()
+        .map(|(todo,)| todo.to_string())
+        .collect::<Vec<String>>();
+
+    axum::response::Json::from(mapped)
 }
 
-async fn add_todo(State(todos): State<AppState>, Json(todo): Json<String>) -> impl IntoResponse {
-    println!("pushing \"{}\" into todos", &todo);
-    todos.lock().await.push(todo);
+async fn add_todo(
+    State(state): State<Arc<AppState>>,
+    Json(todo): Json<String>,
+) -> impl IntoResponse {
+    query("INSERT INTO todos (todo) VALUES ($1)")
+        .bind(todo)
+        .execute(&state.0)
+        .await
+        .expect("adding todo failed");
+
     StatusCode::CREATED
 }
