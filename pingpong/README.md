@@ -3,6 +3,9 @@
 You probably only need `rustc` or `rustup` for this. Then you can run it with
 
 ```sh
+IP=127.0.0.1 \
+PORT=3000 \
+DATABASE_URL=postgres://postgres:password@localhost/postgres \
 cargo run
 ```
 
