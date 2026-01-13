@@ -89,7 +89,8 @@ pub fn App() -> Element {
                 ev.prevent_default();
                 let todo = value.read().clone();
                 if let Ok(todo) = post_todo(todo).await {
-                    todos.push(todo)
+                    todos.push(todo);
+                    value.set(String::new());
                 }
             },
             input {
