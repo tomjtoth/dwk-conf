@@ -8,7 +8,7 @@ Docker images ([`tomjtoth/devops-with-kubernetes:service-x.y`](https://hub.docke
 
 ## K3s tweaks
 
-I found the propagation of changes to be imperfect/slow on my setup, hence I decided to recreate the cluster for every single submission via [this script](./reset-k3s.sh).
+I found the propagation of changes to be imperfect/slow on my setup, hence I decided to recreate the cluster for every single submission via [this script](./k3s.sh).
 
 ### Chapter 2
 
