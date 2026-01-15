@@ -32,7 +32,7 @@ fi
 root_dir="$(dirname "${BASH_SOURCE[0]}")"
 cd "$root_dir"
 
-for manifests in {ns,pv,*}/manifests; do
+for manifests in {ns,pv,*}/manifests/*.yml; do
     if [[ "$manifests" =~ \.gke\.yml$ ]]; then
         continue
     fi

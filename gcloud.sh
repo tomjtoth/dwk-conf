@@ -1,6 +1,6 @@
 #!/bin/bash
 
-USAGE="proper usage is: $(basename $0) OPTIONS
+USAGE="proper usage is: $(basename $0) [OPTIONS]
 
 where OPTIONS are:
 --delete        teardown the cluster
@@ -8,11 +8,6 @@ where OPTIONS are:
 --reset         teardown + redefine the cluster
 --resize N      scale number of nodes in the pool
 "
-
-if [ $# -eq 0 ]; then
-    echo "$USAGE"
-    exit 1
-fi
 
 TAB=$(printf '\t')
 
@@ -48,15 +43,16 @@ if [ -v UNKNOWN_FLAGS ]; then
 fi
 
 op() {
+    local START_TIME=$(date +%s)
     local op=$1
     shift
 
     gcloud container clusters $op dwk-cluster \
         --zone=europe-north1-b \
         "$@"
-}
 
-START_TIME=$(date +%s)
+    echo "operation $op took $(($(date +%s) - $START_TIME)) seconds to finish"
+}
 
 if [ -v DELETING ]; then
     op delete
@@ -76,4 +72,15 @@ if [ -v CREATING ]; then
         --machine-type=e2-micro
 fi
 
-echo "operation took $(($(date +%s) - $START_TIME)) seconds to finish"
+root_dir="$(dirname "${BASH_SOURCE[0]}")"
+cd "$root_dir"
+
+for manifests in {ns,pv,*}/manifests/*.yml; do
+    man_gke="${manifests%.yml}.gke.yml"
+
+    if [ -f "$man_gke" ]; then
+        manifests="$man_gke"
+    fi
+
+    echo kubectl apply -f "$manifests"
+done
