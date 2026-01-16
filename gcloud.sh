@@ -32,7 +32,7 @@ fi
 
 
 gke(){
-    echo kubectl $1 -f "$2"
+    kubectl $1 -f "$2"
 }
 
 if [ -v DELETE_ALL ]; then

@@ -12,7 +12,7 @@ if [ -v CREATE ]; then
 fi
 
 k3s(){
-    echo kubectl $1 --context k3d-k3s-default -f "$2"
+    kubectl $1 --context k3d-k3s-default -f "$2"
 }
 
 if [ -v DELETE_ALL ]; then

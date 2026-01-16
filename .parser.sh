@@ -50,6 +50,7 @@ __parse(){
 
             (--resize)
                 if [ ! -v K3S ]; then
+                    unset APPLY_ALL
                     if [[ ! "$2" =~ ^[0-9]+$ ]]; then
                         WRONG_FLAGS+=("  $1 NNN <- needs to be a numeric arg, found \"$2\"")
                     else
