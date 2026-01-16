@@ -3,38 +3,104 @@
 USAGE="proper usage is: $(basename $0) [OPTIONS]
 
 where OPTIONS are:
---reset     teardown + redefine the cluster
+--rm-cluster                        teardown the cluster
+--add-cluster                       add cluster
+--reset                             teardown + add cluster
+-a | --apply path/to/manifest       apply specific manifest
+-d | --delete path/to/manifest      delete specific manifest
+--delete-all                        delete all manifests
 "
+
+APPLY_ALL=1
 
 while [ $# -gt 0 ]; do
     case "$1" in 
-        (--reset) RESETTING=1;;
-        (*) UNKNOWN_FLAGS+=("$1")
+        (--rm-cluster) 
+            RM_CLUSTER=1 
+            unset APPLY_ALL
+            ;;
+
+        (--add-cluster) ADD_CLUSTER=1;;
+
+        (--reset) RM_CLUSTER=1 ADD_CLUSTER=1;;
+
+        (--delete-all)
+            unset APPLY_ALL
+            DELETE_ALL=1
+            ;;
+
+        (-a|--apply)
+            unset APPLY_ALL
+            if [ ! -f "$2" ]; then
+                WRONG_FLAGS+=("--apply MANI <- MANI must be an existing file, got \"$2\"")
+            else
+                APPLY_THESE+=("$2")
+            fi
+            shift
+            ;;
+
+        (-d|--delete)
+            unset APPLY_ALL
+            if [ ! -f "$2" ]; then
+                WRONG_FLAGS+=("--delete MANI <- MANI must be an existing file, got \"$2\"")
+            else
+                DELETE_THESE+=("$2")
+            fi
+            shift
+            ;;
+
+        (*) WRONG_FLAGS+=("$1")
     esac
     shift
 done
 
-if [ -v UNKNOWN_FLAGS ]; then
+if [ -v WRONG_FLAGS ]; then
     printf '%s\n' \
-        "found the following unknown flags: ${UNKNOWN_FLAGS[*]}" \
+        "the following flags are wrong/unknown: ${WRONG_FLAGS[*]}" \
         "" \
         "$USAGE"
     exit 1
 fi
 
-if [ -v RESETTING ]; then
-    k3d cluster delete
-    k3d cluster create --port 8082:30080@agent:0 -p 8081:80@loadbalancer --agents 2
+START_TIME=$(date +%s)
 
-    docker exec k3d-k3s-default-agent-0 mkdir -p /tmp/kube-{exercises,project}
+if [ -v RM_CLUSTER ]; then
+    k3d cluster delete
 fi
 
-root_dir="$(dirname "${BASH_SOURCE[0]}")"
-cd "$root_dir"
+if [ -v ADD_CLUSTER ]; then
+    k3d cluster create --port 8082:30080@agent:0 -p 8081:80@loadbalancer --agents 2
+fi
 
-for manifests in {ns,pv,*}/manifests/*.yml; do
-    if [[ "$manifests" =~ \.gke\.yml$ ]]; then
-        continue
-    fi
-    kubectl --context k3d-k3s-default apply -f $manifests
-done
+k3s_op(){
+    kubectl --context k3d-k3s-default "$@"
+}
+
+script_dir="$(dirname "$(realpath "${BASH_SOURCE[0]}")")"
+shopt -s extglob
+
+if [ -v DELETE_ALL ]; then
+    for manifest in "$script_dir"/{!(ns),ns}/manifests/!(*.gke).yml; do
+        k3s_op delete -f $manifest
+    done
+fi
+
+if [ -v APPLY_ALL ]; then
+    for manifest in "$script_dir"/{ns,pv,!(ns|pv)}/manifests/!(*.gke).yml; do
+        k3s_op apply -f $manifest
+    done
+fi
+
+if [ -v APPLY_THESE ]; then
+    for manifest in "${APPLY_THESE[@]}"; do
+        k3s_op apply -f "$manifest"
+    done
+fi
+
+if [ -v DELETE_THESE ]; then
+    for manifest in "${DELETE_THESE[@]}"; do
+        k3s_op delete -f "$manifest"
+    done
+fi
+
+echo "ops took $(($(date +%s) - $START_TIME)) seconds to finish"
