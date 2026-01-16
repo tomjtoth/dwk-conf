@@ -77,7 +77,7 @@ __parse(){
 
             (-a|--apply)
                 unset APPLY_ALL
-                if [ ! -f "$2" ]; then
+                if [ ! -f "$2" ] && [ ! -d "$2" ]; then
                     WRONG_FLAGS+=("  $1 \"$2\" <- file does not exist")
                 else
                     APPLY_THESE+=("$2")
@@ -87,7 +87,7 @@ __parse(){
 
             (-d|--delete)
                 unset APPLY_ALL
-                if [ ! -f "$2" ]; then
+                if [ ! -f "$2" ] && [ ! -d "$2" ]; then
                     WRONG_FLAGS+=("  $1 \"$2\" <- file does not exist")
                 else
                     DELETE_THESE+=("$2")
