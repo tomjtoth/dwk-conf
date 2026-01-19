@@ -19,7 +19,7 @@ spec:
             claimName: pvc-100m
       containers:
         - name: todo-app
-          image: tomjtoth/devops-with-kubernetes:todo-app-2.6
+          image: IMAGES/APP
           imagePullPolicy: Always
           env:
             - name: IP
