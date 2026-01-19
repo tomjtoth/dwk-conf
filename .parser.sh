@@ -2,7 +2,7 @@ shopt -s extglob nullglob
 
 __parse(){
     # being sourced from both ./{k3s,gcloud}.sh
-    local script=${1%.sh} K3S=1 opts=(
+    local path script=${1%.sh} K3S=1 opts=(
         --teardown                            "teardown the cluster"
         --create                              "create the cluster"
         --reset                               "re-create the cluster"
@@ -77,7 +77,8 @@ __parse(){
 
             (-a|--apply)
                 unset APPLY_ALL
-                if [ ! -f "$2" ] && [ ! -d "$2" ]; then
+                path="$OLDPWD/$2"
+                if [ ! -f "$path" ] && [ ! -d "$path" ]; then
                     WRONG_FLAGS+=("  $1 \"$2\" <- file does not exist")
                 else
                     APPLY_THESE+=("$2")
@@ -87,7 +88,8 @@ __parse(){
 
             (-d|--delete)
                 unset APPLY_ALL
-                if [ ! -f "$2" ] && [ ! -d "$2" ]; then
+                path="$OLDPWD/$2"
+                if [ ! -f "$path" ] && [ ! -d "$path" ]; then
                     WRONG_FLAGS+=("  $1 \"$2\" <- file does not exist")
                 else
                     DELETE_THESE+=("$2")
