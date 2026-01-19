@@ -27,6 +27,8 @@ if [ -v CREATE ]; then
         --cluster-version=1.32 \
         --disk-size=32 \
         --num-nodes=3 \
+        --gateway-api=standard \
+        --location=europe-north1-b \
         --machine-type=e2-micro
 fi
 

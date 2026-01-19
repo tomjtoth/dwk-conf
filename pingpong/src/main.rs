@@ -24,8 +24,7 @@ async fn main() {
     let state = Arc::new(AppState { pool });
 
     let app = Router::new()
-        .route("/", get(|| async { StatusCode::OK }))
-        .route("/pingpong", get(handle_browser))
+        .route("/", get(handle_browser))
         .route("/pings", get(handle_ping))
         .with_state(state);
 
