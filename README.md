@@ -52,3 +52,7 @@ I found the propagation of changes to be imperfect/slow on my setup, hence I dec
 - [3.3](https://github.com/tomjtoth/DevOps-with-Kubernetes/tree/3.3/log_output)
 - [3.4](https://github.com/tomjtoth/DevOps-with-Kubernetes/tree/3.4/log_output)
 - [3.5](https://github.com/tomjtoth/DevOps-with-Kubernetes/tree/3.5/todo_app)
+- 3.6 **SKIPPED**
+- 3.7 **SKIPPED**
+- 3.8 **SKIPPED**
+- [3.9](https://github.com/tomjtoth/DevOps-with-Kubernetes/tree/3.9/todo_app)
