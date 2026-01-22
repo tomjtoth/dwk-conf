@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: pingpong
-          image: tomjtoth/devops-with-kubernetes:pingpong-3.4
+          image: tomjtoth/devops-with-kubernetes:pingpong-4.1
           env:
             - name: IP
               value: 0.0.0.0
@@ -23,3 +23,10 @@ spec:
               value: "3000"
             - name: DATABASE_URL
               value: postgres://postgres:password@postgres-svc
+
+          readinessProbe:
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            httpGet:
+              path: /healthz
+              port: 3000

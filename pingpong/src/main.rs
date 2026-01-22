@@ -25,6 +25,9 @@ async fn main() {
 
     let app = Router::new()
         .route("/pingpong", get(handle_browser))
+        .route("/healthz", get(|| async { StatusCode::OK }))
+        // for the ingress or whichever manifest that required `GET / -> 200 OK`
+        .route("/", get(|| async { StatusCode::OK }))
         .route("/pings", get(handle_ping))
         .with_state(state);
 
