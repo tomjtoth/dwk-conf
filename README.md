@@ -64,3 +64,9 @@ I found the propagation of changes to be imperfect/slow on my setup, hence I dec
 
 - [4.1](https://github.com/tomjtoth/DevOps-with-Kubernetes/tree/4.1/pingpong)
 - [4.2](https://github.com/tomjtoth/DevOps-with-Kubernetes/tree/4.2/todo_app)
+- [4.3](https://github.com/tomjtoth/DevOps-with-Kubernetes/tree/4.3)
+  got 2 results:
+  ```sh
+  kube_pod_info{namespace="prometheus", created_by_kind="StatefulSet"}
+  ```
+  ![pods created by statefulSet in ns prometheus](prometheus-query-res1.png)
