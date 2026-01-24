@@ -2,6 +2,8 @@ use sqlx::{Pool, Postgres, postgres::PgPoolOptions};
 use std::{
     env,
     sync::{Arc, LazyLock},
+    thread,
+    time::{Duration, Instant},
 };
 
 use axum::{Router, extract::State, http::StatusCode, response::IntoResponse, routing::get};
@@ -15,6 +17,22 @@ struct AppState {
 
 #[tokio::main]
 async fn main() {
+    let mut handle = None;
+
+    if let Ok(num_str) = env::var("STRESS_FOR") {
+        let dur = num_str
+            .parse::<u64>()
+            .expect("STRESS_FOR should be valid u64");
+
+        handle.replace(thread::spawn(move || {
+            let start = Instant::now();
+            while start.elapsed() < Duration::from_secs(dur) {
+                // Busy loop = max CPU usage
+                std::hint::spin_loop();
+            }
+        }));
+    }
+
     let pool = PgPoolOptions::new()
         .max_connections(5)
         .connect(&*DATABASE_URL)
@@ -39,6 +57,10 @@ async fn main() {
 
     println!("listening at http://{}/pingpong", &addr);
     axum::serve(listener, app).await.unwrap();
+
+    if let Some(handle) = handle {
+        handle.join().unwrap();
+    }
 }
 
 async fn healthcheck(State(state): State<Arc<AppState>>) -> impl IntoResponse {
