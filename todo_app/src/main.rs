@@ -49,26 +49,27 @@ fn log2<T: std::error::Error>(ops: impl std::fmt::Display) -> impl Fn(&T) {
 
 #[get("/todos")]
 async fn get_todos() -> Result<Vec<Todo>> {
-    let arr = reqwest::get(&*conf::BACKEND_URL)
+    let todos = reqwest::get(&*conf::BACKEND_URL)
         .await
         .inspect_err(log2("request to backend failed"))?
         .json()
         .await
         .inspect_err(log2("parsing json failed"))?;
 
-    Ok(arr)
+    Ok(todos)
 }
 
 #[post("/todos")]
 async fn post_todo(todo: String) -> Result<Todo> {
-    let res = reqwest::Client::new()
+    let todo = reqwest::Client::new()
         .post(&*conf::BACKEND_URL)
         .json(&todo)
         .send()
         .await
-        .inspect_err(log2("posting todo to backend"))?;
+        .inspect_err(log2("posting todo to backend"))?
+        .json()
+        .await?;
 
-    let todo = res.json::<Todo>().await?;
     Ok(todo)
 }
 
