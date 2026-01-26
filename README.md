@@ -71,5 +71,5 @@ I found the propagation of changes to be imperfect/slow on my setup, hence I dec
   ```
   ![pods created by statefulSet in ns prometheus](prometheus-query-res1.png)
 - [4.4](https://github.com/tomjtoth/DevOps-with-Kubernetes/tree/4.4/pingpong)
-- [4.5](https://github.com/tomjtoth/DevOps-with-Kubernetes/tree/4.5/pingpong)
+- [4.5](https://github.com/tomjtoth/DevOps-with-Kubernetes/tree/4.5/todo_app)
   no time for migrations atm, I teardown/re-create my clusters often enough, anyways 🤓
