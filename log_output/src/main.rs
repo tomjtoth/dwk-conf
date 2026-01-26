@@ -7,7 +7,7 @@ use uuid::Uuid;
 async fn main() {
     let id = Uuid::new_v4();
 
-    let log_path = env::var("LOG_PATH").expect("missing env var LOG_PATH");
+    let log_path = env::var("LOG_PATH").expect("missing env  var LOG_PATH");
 
     let mut file = File::options()
         .append(true)
