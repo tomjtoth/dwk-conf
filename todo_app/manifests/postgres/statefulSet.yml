@@ -7,11 +7,11 @@ data:
   init.sql: |
     CREATE TABLE IF NOT EXISTS todos (
       id SERIAL,
-      todo TEXT,
-      done boolean
+      task TEXT,
+      done boolean DEFAULT (FALSE)
     );
 
-    INSERT INTO todos (todo) VALUES 
+    INSERT INTO todos (task) VALUES 
       ('Learn Rust'),
       ('Learn Dioxus'),
       ('Build something');
