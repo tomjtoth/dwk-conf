@@ -10,7 +10,7 @@ use dioxus::{fullstack::reqwest, server::axum::routing::get};
 
 #[derive(Serialize, Deserialize, Clone)]
 struct Todo {
-    id: i64,
+    id: i32,
     done: bool,
     task: String,
 }
@@ -74,10 +74,9 @@ async fn post_todo(todo: String) -> Result<Todo> {
 }
 
 #[put("/todos/:id")]
-async fn mark_done(id: i64) -> Result<()> {
+async fn mark_done(id: i32) -> Result<()> {
     reqwest::Client::new()
-        .put(&*conf::BACKEND_URL)
-        .json(&id)
+        .put(format!("{}/{}", &*conf::BACKEND_URL, id))
         .send()
         .await
         .inspect_err(log2("marking todo done"))?;
@@ -87,8 +86,7 @@ async fn mark_done(id: i64) -> Result<()> {
 
 #[component]
 pub fn App() -> Element {
-    let todos_query_res: Resource<std::result::Result<Vec<Todo>, dioxus::CapturedError>> =
-        use_server_future(get_todos)?;
+    let todos_query_res = use_server_future(get_todos)?;
     use_server_future(check_on_image)?;
 
     let mut value = use_signal(|| String::new());
@@ -124,21 +122,25 @@ pub fn App() -> Element {
         ul {
             for todo in todos.iter() {
                 if !todo.done {
-                    button {
-                        onclick: {
-                            let id = todo.id.clone();
-                            move |_| async move {
-                                if mark_done(id).await.is_ok() {
-                                    for mut todo in todos.iter_mut() {
-                                        if todo.id == id {
-                                            todo.done = true;
-                                            break;
+                    li { key: "{todo.id}",
+                        "{todo.task}"
+
+                        button {
+                            onclick: {
+                                let id = todo.id.clone();
+                                move |_| async move {
+                                    if mark_done(id).await.is_ok() {
+                                        for mut todo in todos.iter_mut() {
+                                            if todo.id == id {
+                                                todo.done = true;
+                                                break;
+                                            }
                                         }
                                     }
                                 }
-                            }
-                        },
-                        "Mark as done"
+                            },
+                            "Mark as done"
+                        }
                     }
                 }
             }

@@ -10,10 +10,19 @@ use axum::{
     extract::State,
     routing::{get, post},
 };
+use serde::{Deserialize, Serialize};
 use sqlx::postgres::PgPoolOptions;
+use sqlx::prelude::FromRow;
 use sqlx::{Pool, Postgres, query, query_as};
 
 struct AppState(Pool<Postgres>);
+
+#[derive(Serialize, Deserialize, Clone, FromRow)]
+struct Todo {
+    id: i32,
+    done: bool,
+    task: String,
+}
 
 static DATABASE_URL: LazyLock<String> =
     LazyLock::new(|| env::var("DATABASE_URL").expect("missing env var DATABASE_URL"));
@@ -46,41 +55,36 @@ async fn main() {
 }
 
 async fn retrieve_todos(State(state): State<Arc<AppState>>) -> impl IntoResponse {
-    let todos: Vec<(String,)> = query_as("SELECT todo FROM todos")
+    let todos: Vec<Todo> = query_as("SELECT * FROM todos")
         .fetch_all(&state.0)
         .await
         .expect("retrieving todos failed");
 
     println!("serving {} todos", todos.len());
 
-    let mapped = todos
-        .iter()
-        .map(|(todo,)| todo.to_string())
-        .collect::<Vec<String>>();
-
-    axum::response::Json::from(mapped)
+    axum::response::Json::from(todos)
 }
 
 async fn add_todo(
     State(state): State<Arc<AppState>>,
     Json(todo): Json<String>,
-) -> impl IntoResponse {
+) -> Result<axum::Json<Todo>, StatusCode> {
     let len = todo.len();
 
     println!("Adding todo:\n\t{}", todo);
 
     if len > 140 {
         eprintln!("todo longer, than 140 ({}), aborting!", len);
-        return StatusCode::BAD_REQUEST;
+        return Err(StatusCode::BAD_REQUEST);
     }
 
-    query("INSERT INTO todos (todo) VALUES ($1)")
+    let todo: Todo = query_as("INSERT INTO todos (task) VALUES ($1) RETURNING *")
         .bind(todo)
-        .execute(&state.0)
+        .fetch_one(&state.0)
         .await
         .expect("adding todo failed");
 
-    StatusCode::CREATED
+    Ok(axum::response::Json::from(todo))
 }
 
 async fn mark_done(State(state): State<Arc<AppState>>, Path(id): Path<i64>) -> impl IntoResponse {
