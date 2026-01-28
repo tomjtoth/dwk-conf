@@ -21,11 +21,17 @@ jobs:
           COMMIT_MSG: ${{ github.event.head_commit.message }}
         run: |
           # https://regex101.com/r/H4BBVD
-          read -r PROD APP VER PH <<<"$(
-            printf '%s' "$COMMIT_MSG" \
-            | sed -nE 's/.*#deploy\s+(PROD\s+)?\([[:alnum:]-]+)\s*(\(([^\)]+)\))?:\s*([0-9]+\.[0-9]+).*/"\1" "\2" "\5" "\4"/p'
-          )"
-          [ -z "$APP" ] && exit 1
+          regex='#deploy\s+(PROD\s+)?([[:alnum:]-]+)\s*(\(([^\)]+)\))?:\s*([0-9]+\.[0-9]+)]]'
+
+          if [[ "$COMMIT_MSG" =~ $regex ]]; then
+            PROD=${BASH_REMATCH[1]}
+            APP=${BASH_REMATCH[2]}
+            PH=${BASH_REMATCH[4]}
+            VER=${BASH_REMATCH[5]}
+          else
+            exit 1
+          fi
+
           echo "IMAGE=tomjtoth/devops-with-kubernetes:$APP-$VER" >> $GITHUB_ENV
           echo "PLACEHOLDER=${PH:-${APP^^}}" >> $GITHUB_ENV
           echo "KUSTOMIZE_PROD_CHK=$PROD" >> $GITHUB_ENV
@@ -45,7 +51,7 @@ jobs:
             echo "KUSTOMIZE=1" >> $GITHUB_ENV
           fi
 
-          if [ -v KUSTOMIZE_PROD_CHK ] && \
+          if [ -n "$KUSTOMIZE_PROD_CHK" ] && \
              [ -f $FOLDER/manifests/overlays/prod/kustomization.yml ]
           then
             echo "KUSTOMIZE_PROD=1" >> $GITHUB_ENV
