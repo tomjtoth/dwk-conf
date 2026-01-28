@@ -85,7 +85,7 @@ I found the propagation of changes to be imperfect/slow on my setup, hence I dec
 
     > Each commit to the main branch should result in deployment to the staging environment
 
-  - The below gets trigggered via HEAD commit messages, like: `#deploy PROD todo-app(APP):4.9`, details [here](.github/workflows/deploy.yml#L88-L98), successful run [here](https://github.com/tomjtoth/DevOps-with-Kubernetes/actions/runs/21443650863/job/61754262933)
+  - The below gets trigggered via HEAD commit messages, like: `#deploy PROD todo-app(APP):4.9`, details [here](.github/workflows/deploy.yml#L88-L98), successful run [here](https://github.com/tomjtoth/DevOps-with-Kubernetes/actions/runs/21444707730/job/61757092527)
 
     > Each tagged commit results in deployment to the production environment
 
