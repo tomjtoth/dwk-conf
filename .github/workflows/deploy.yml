@@ -47,12 +47,12 @@ jobs:
 
       - name: decide if can run Kustomize
         run: |
-          if [ -f $FOLDER/manifests/base/kustomization.yml ]; then
+          if [ -f "$FOLDER/manifests/base/kustomization.yml" ]; then
             echo "KUSTOMIZE=1" >> $GITHUB_ENV
           fi
 
           if [ -n "$KUSTOMIZE_PROD_CHK" ] && \
-             [ -f $FOLDER/manifests/overlays/prod/kustomization.yml ]
+             [ -f "$FOLDER/manifests/overlays/prod/kustomization.yml" ]
           then
             echo "KUSTOMIZE_PROD=1" >> $GITHUB_ENV
           fi
