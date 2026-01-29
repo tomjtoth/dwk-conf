@@ -8,7 +8,20 @@ if [ -v DELETE ]; then
 fi
 
 if [ -v CREATE ]; then
-    k3d cluster create --port 8082:30080@agent:0 -p 8081:80@loadbalancer --agents 2
+    k3d cluster create \
+        --api-port 6550 \
+        --k3s-arg '--disable=traefik@server:*' \
+        --agents 2 \
+        --port '9080:80@loadbalancer' \
+        --port '9443:443@loadbalancer'
+
+    istioctl install \
+        --skip-confirmation \
+        --set profile=ambient \
+        --set values.global.platform=k3d
+
+    # kubectl get crd gateways.gateway.networking.k8s.io &> /dev/null || \
+    kubectl apply --server-side -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.4.0/experimental-install.yaml
 
     install_bloatware k3d-k3s-default
 fi
