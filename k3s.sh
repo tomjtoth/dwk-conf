@@ -22,7 +22,7 @@ if [ -v CREATE ]; then
     #     --set profile=ambient \
     #     --set values.global.platform=k3d
 
-    # kubectl apply --server-side -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.4.0/experimental-install.yaml
+    kubectl apply --server-side -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.4.0/experimental-install.yaml
 
     # knative installation
     kubectl apply -f https://github.com/knative/serving/releases/download/knative-v1.21.0/serving-crds.yaml
