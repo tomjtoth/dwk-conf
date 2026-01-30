@@ -41,19 +41,7 @@ if [ -v CREATE ]; then
     kubectl --namespace istio-system get service istio-ingressgateway
 
     kubectl apply -f https://github.com/knative/serving/releases/download/knative-v1.21.0/serving-default-domain.yaml
-
-    for dep in webhook activator autoscaler controller net-istio-controller net-istio-webhook; do
-        kubectl patch deployment $dep -n knative-serving --type='json' -p='[
-          {
-            "op": "add",
-            "path": "/spec/template/spec/containers/0/env/-",
-            "value": {
-            "name": "KUBERNETES_MIN_VERSION",
-            "value": "1.31.0-0"
-            }
-          }
-        ]'
-    done
+    kubectl set env deployment --all -n knative-serving KUBERNETES_MIN_VERSION=1.31.0-0
 
     kubectl get pods -n knative-serving
 
