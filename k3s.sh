@@ -16,6 +16,7 @@ if [ -v CREATE ]; then
         --port '9082:30080@agent:0' \
         --port '9443:443@loadbalancer'
 
+    # istoi installation
     # istioctl install \
     #     --skip-confirmation \
     #     --set profile=ambient \
@@ -41,10 +42,6 @@ if [ -v CREATE ]; then
 
     kubectl apply -f https://github.com/knative/serving/releases/download/knative-v1.21.0/serving-default-domain.yaml
     kubectl set env deployment --all -n knative-serving KUBERNETES_MIN_VERSION=1.31.0-0
-
-    # removing istio's loadbalancer, as it blocks mine 😎
-    kubectl delete svc istio-ingressgateway -n istio-system
-    kubectl delete deploy istio-ingressgateway -n istio-system
 
     kubectl get pods -n knative-serving
 
