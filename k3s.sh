@@ -13,15 +13,49 @@ if [ -v CREATE ]; then
         --k3s-arg '--disable=traefik@server:*' \
         --agents 2 \
         --port '9080:80@loadbalancer' \
+        --port '9082:30080@agent:0' \
         --port '9443:443@loadbalancer'
 
-    istioctl install \
-        --skip-confirmation \
-        --set profile=ambient \
-        --set values.global.platform=k3d
+    # istoi installation
+    # istioctl install \
+    #     --skip-confirmation \
+    #     --set profile=ambient \
+    #     --set values.global.platform=k3d
 
-    # kubectl get crd gateways.gateway.networking.k8s.io &> /dev/null || \
-    kubectl apply --server-side -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.4.0/experimental-install.yaml
+    # kubectl apply --server-side -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.4.0/experimental-install.yaml
+
+    # knative installation
+    kubectl apply -f https://github.com/knative/serving/releases/download/knative-v1.21.0/serving-crds.yaml
+    kubectl apply -f https://github.com/knative/serving/releases/download/knative-v1.21.0/serving-core.yaml
+
+    kubectl apply -l knative.dev/crd-install=true -f https://github.com/knative-extensions/net-istio/releases/download/knative-v1.21.0/istio.yaml
+    kubectl apply -f https://github.com/knative-extensions/net-istio/releases/download/knative-v1.21.0/istio.yaml
+
+    kubectl apply -f https://github.com/knative-extensions/net-istio/releases/download/knative-v1.21.0/net-istio.yaml
+
+    kubectl patch configmap/config-network \
+        --namespace knative-serving \
+        --type merge \
+        --patch '{"data":{"ingress-class":"istio.ingress.networking.knative.dev"}}'
+
+    kubectl --namespace istio-system get service istio-ingressgateway
+
+    kubectl apply -f https://github.com/knative/serving/releases/download/knative-v1.21.0/serving-default-domain.yaml
+
+    for dep in webhook activator autoscaler controller net-istio-controller net-istio-webhook; do
+        kubectl patch deployment $dep -n knative-serving --type='json' -p='[
+          {
+            "op": "add",
+            "path": "/spec/template/spec/containers/0/env/-",
+            "value": {
+            "name": "KUBERNETES_MIN_VERSION",
+            "value": "1.31.0-0"
+            }
+          }
+        ]'
+    done
+
+    kubectl get pods -n knative-serving
 
     # install_bloatware k3d-k3s-default
 fi
