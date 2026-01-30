@@ -23,7 +23,7 @@ if [ -v CREATE ]; then
     # kubectl get crd gateways.gateway.networking.k8s.io &> /dev/null || \
     kubectl apply --server-side -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.4.0/experimental-install.yaml
 
-    install_bloatware k3d-k3s-default
+    # install_bloatware k3d-k3s-default
 fi
 
 k3s(){
